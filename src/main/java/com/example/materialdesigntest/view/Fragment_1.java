@@ -22,8 +22,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.LinearInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -37,20 +37,15 @@ import com.example.materialdesigntest.diy_view.HeaderViewPager;
 import com.example.materialdesigntest.gsonBean.DataOverview;
 import com.example.materialdesigntest.model.IDataHandle;
 import com.example.materialdesigntest.model.MovieListImp;
-import com.example.materialdesigntest.util.DepthPageTransformer;
 import com.example.materialdesigntest.util.Mlog;
 import com.example.materialdesigntest.util.Mutil;
 import com.example.materialdesigntest.util.MyTransformation;
-import com.example.materialdesigntest.util.ZoomOutPageTransformer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -78,7 +73,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     private DisplayImageOptions options;
 
     private Context context;
-    private MyRecyclerAdapter adapter;
+    private MainRecyclerAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FrameLayout headerView;
@@ -199,8 +194,8 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             private void showFab() {
                 if(!flag) {
                     fab.clearAnimation();
-                    fab.animate().alpha(1).scaleX(1).scaleY(1).setDuration(700).
-                            setInterpolator(new AnticipateOvershootInterpolator()).
+                    fab.animate().alpha(1).scaleX(1).scaleY(1).setDuration(500).
+                            setInterpolator(new OvershootInterpolator()).
                             setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -215,7 +210,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             private void hideFab() {
                 if(flag) {
                     fab.clearAnimation();
-                    fab.animate().alpha(0).scaleX(0).scaleY(0).setDuration(500).setListener(new AnimatorListenerAdapter() {
+                    fab.animate().alpha(0.7f).scaleX(0).scaleY(0).setInterpolator(new DecelerateInterpolator()).setDuration(500).setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
@@ -276,6 +271,8 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                         }
                         handler.sendEmptyMessage(OK);
                     }
+                }else {
+                    Mlog.d("ccy","fragment_1"+"网络错误"+response.code());
                 }
             }
         });
@@ -313,7 +310,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
 
     private void initRecyclerView() {
 
-        adapter = new MyRecyclerAdapter(context, dataOverviews);
+        adapter = new MainRecyclerAdapter(context, dataOverviews,getActivity());
         adapter.setHeaderView(headerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
@@ -369,8 +366,24 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 //                    Glide.with(context).load(headerData.get(i).getImgUri()).placeholder(R.drawable.aam).error(R.drawable.ddd).into(imageView);
                     ImageLoader.getInstance().displayImage(headerData.get(i).getImgUri(), imageView, options);
-                    imageView.setTag(headerData.get(i).getImgUri());
-                    imageView.setOnClickListener((View.OnClickListener) context);
+                    imageView.setTag(headerData.get(i));
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Mutil.showToast("click img");
+                            DataOverview d = (DataOverview) v.getTag();
+                            Intent intent = new Intent(context, Activity_2.class);
+                            intent.putExtra("imgId",d.getImgUri());
+                            intent.putExtra("id",d.getId());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+                                        getActivity(), v, "share"
+                                ).toBundle());
+                            } else {
+                                startActivity(intent);
+                            }
+                        }
+                    });
                     list.add(view);
                     ImageView dot = new ImageView(context);
                     dot.setImageResource(R.drawable.unselect);
@@ -418,18 +431,19 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.view_pager_item_img:
-                int resId = (int) v.getTag();
-                Intent intent = new Intent(context, Activity_2.class);
-                intent.putExtra("resId", resId);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
-                            getActivity(), v, "share"
-                    ).toBundle());
-                } else {
-                    startActivity(intent);
-                }
-                break;
+//            case R.id.view_pager_item_img:
+//                Mutil.showToast("click img");
+//                int resId = (int) v.getTag();
+//                Intent intent = new Intent(context, Activity_2.class);
+//                intent.putExtra("resId", resId);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+//                            getActivity(), v, "share"
+//                    ).toBundle());
+//                } else {
+//                    startActivity(intent);
+//                }
+//                break;
             case R.id.fab:
                 createBottomSheet();
         }

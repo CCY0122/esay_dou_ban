@@ -1,6 +1,10 @@
 package com.example.materialdesigntest.view;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -13,7 +17,6 @@ import android.widget.TextView;
 
 import com.example.materialdesigntest.R;
 import com.example.materialdesigntest.gsonBean.DataOverview;
-import com.example.materialdesigntest.util.Mutil;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -23,19 +26,24 @@ import java.util.List;
  * Created by Administrator on 2016/11/14.
  */
 
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.mViewHolder> {
+public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.mViewHolder> {
 
     private Context context;
     private List<DataOverview> data;
     private View headerView;
     DisplayImageOptions options;
+    private Activity activity;
 
 
-    public MyRecyclerAdapter(Context context, List<DataOverview> data) {
+    public MainRecyclerAdapter(Context context, List<DataOverview> data) {
         this.context = context;
         this.data = data;
         options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisk(true).showImageOnFail(R.drawable.ddd).showImageOnLoading(R.drawable.loading).build();
+    }
+    public MainRecyclerAdapter(Context context, List<DataOverview> data, Activity activity) {
+        this(context,data);
+        this.activity = activity;
     }
 
     public void setHeaderView(View v) {
@@ -62,7 +70,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.mV
     }
 
     @Override
-    public void onBindViewHolder(mViewHolder holder, final int position) {
+    public void onBindViewHolder(final mViewHolder holder, final int position) {
         if (getItemViewType(position) == 1) {
             return;
         } else {
@@ -74,7 +82,18 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.mV
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Mutil.showToast(""+position);
+                    String imgId = data.get(position-1).getImgUri();
+                    String id = data.get(position-1).getId();
+                    Intent intent = new Intent(context, Activity_2.class);
+                    intent.putExtra("imgId", imgId);
+                    intent.putExtra("id",id);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+                                activity,holder.imageView, "share"
+                        ).toBundle());
+                    } else {
+                        context.startActivity(intent);
+                    }
                 }
             });
         }

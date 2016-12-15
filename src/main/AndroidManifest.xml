@@ -23,8 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.Activity_2"
-            android:hardwareAccelerated="false" />
+            android:name=".view.Activity_2" />
     </application>
 
 </manifest>

@@ -22,6 +22,7 @@
             android:maxWidth="200dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:transitionName="share"
             />
 
         <TextView

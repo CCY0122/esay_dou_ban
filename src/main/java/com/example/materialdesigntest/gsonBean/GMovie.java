@@ -14,7 +14,7 @@ public class GMovie {
 
     public class Rating {
         public int max;
-        public double avergae;
+        public float average;
         public String stars;
         public int min;
     }
@@ -33,6 +33,10 @@ public class GMovie {
     public List<String> genres;
     public String summary;
     public List<Casts> casts;
+    public int collect_count; //看过人数
+    public int wish_count;//想看人数
+    public int ratings_count;//评分人数
+    public String mobile_url;
 
 
 }

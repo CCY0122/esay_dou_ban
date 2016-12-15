@@ -43,15 +43,16 @@ public class RoundIndicatorView extends View {
     private int mHeight;
     private int sweepInWidth;//内圆的宽度
     private int sweepOutWidth;//外圆的宽度
-    private float currentNum=0;//需设置setter、getter 供属性动画使用
-    private String[] text ={"冰天雪地","瑟瑟发抖","注意保暖","温和舒适","酷暑难耐"};
+    private int currentNum=0;//需设置setter、getter 供属性动画使用
+    private String[] text ={"","","","",""};
     private int[] indicatorColor = {0xffffffff,0x00ffffff,0x99ffffff,0xffffffff};
+    private String contentStr;
 
-    public float getCurrentNum() {
+    public int getCurrentNum() {
         return currentNum;
     }
 
-    public void setCurrentNum(float currentNum) {
+    public void setCurrentNum(int currentNum) {
         this.currentNum = currentNum;
         invalidate();
     }
@@ -67,31 +68,26 @@ public class RoundIndicatorView extends View {
     public RoundIndicatorView(final Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        setBackgroundColor(0xffFAEBD7);
+//        setBackgroundColor(0xffFAEBD7);
         initAttr(attrs);
         initPaint();
     }
 
     public void setCurrentNumAnim(int num) {
-        float realNum = num+10;
-        float duration = (float)Math.abs(realNum-currentNum)/maxNum *2000+2000; //根据进度差计算动画时间
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this,"currentNum",realNum);
-        anim.setDuration((long) duration);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                int color = calculateColor(value);
-                setBackgroundColor(color);
-            }
-        });
+        float duration = (float)Math.abs(num-currentNum)/maxNum *3000.0f+2000; //根据进度差计算动画时间
+        ObjectAnimator anim = ObjectAnimator.ofInt(this,"currentNum",num);
+        anim.setDuration((long) Math.min(5000,duration));
+//        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                float value = (float) animation.getAnimatedValue();
+//                int color = calculateColor(value);
+//                setBackgroundColor(color);
+//            }
+//        });
         anim.start();
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-    }
 
     private int calculateColor(float value){
         ArgbEvaluator evealuator = new ArgbEvaluator();
@@ -119,9 +115,11 @@ public class RoundIndicatorView extends View {
 
     private void initAttr(AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.RoundIndicatorView);
-        maxNum = array.getInt(R.styleable.RoundIndicatorView_maxNum,500);
+        maxNum = array.getInt(R.styleable.RoundIndicatorView_maxNum,200000);
         startAngle = array.getInt(R.styleable.RoundIndicatorView_startAngle,160);
         sweepAngle = array.getInt(R.styleable.RoundIndicatorView_sweepAngle,220);
+//        contentStr = array.getString(R.styleable.RoundIndicatorView_contentStr);
+        contentStr = "评分人数";
         //内外圆的宽度
         sweepInWidth = dp2px(8);
         sweepOutWidth = dp2px(3);
@@ -157,9 +155,9 @@ public class RoundIndicatorView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        radius = getMeasuredWidth()/4; //不要在构造方法里初始化，那时还没测量宽高
+        radius = getMeasuredWidth()/2-40; //不要在构造方法里初始化，那时还没测量宽高
         canvas.save();
-        canvas.translate(mWidth/2,(mWidth)/2);
+        canvas.translate(mWidth/2,mHeight/2+20);
         drawRound(canvas);  //画内外圆
         drawScale(canvas);//画刻度
         drawIndicator(canvas); //画当前进度值
@@ -170,26 +168,27 @@ public class RoundIndicatorView extends View {
     private void drawCenterText(Canvas canvas) {
         canvas.save();
         paint_4.setStyle(Paint.Style.FILL);
-        paint_4.setTextSize(radius/2);
+        paint_4.setTextSize(radius/3);
         paint_4.setColor(0xffffffff);
-        String tem = (int)currentNum-10 + "\u2103";
-        canvas.drawText(tem,-paint_4.measureText(tem)/2,0,paint_4);
+//        String tem = (int)currentNum-10 + "\u2103";
+//        canvas.drawText(tem,-paint_4.measureText(tem)/2,0,paint_4);
+        canvas.drawText(currentNum+"",-paint_4.measureText(currentNum+"")/2,0,paint_4);
         paint_4.setTextSize(radius/4);
-        String content = "";
-        if(currentNum < maxNum*1/5){
-            content += text[0];
-        }else if(currentNum >= maxNum*1/5 && currentNum < maxNum*2/5){
-            content += text[1];
-        }else if(currentNum >= maxNum*2/5 && currentNum < maxNum*3/5){
-            content += text[2];
-        }else if(currentNum >= maxNum*3/5 && currentNum < maxNum*4/5){
-            content += text[3];
-        }else if(currentNum >= maxNum*4/5){
-            content += text[4];
-        }
+//        String content = contentStr;
+//        if(currentNum < maxNum*1/5){
+//            content += text[0];
+//        }else if(currentNum >= maxNum*1/5 && currentNum < maxNum*2/5){
+//            content += text[1];
+//        }else if(currentNum >= maxNum*2/5 && currentNum < maxNum*3/5){
+//            content += text[2];
+//        }else if(currentNum >= maxNum*3/5 && currentNum < maxNum*4/5){
+//            content += text[3];
+//        }else if(currentNum >= maxNum*4/5){
+//            content += text[4];
+//        }
         Rect r = new Rect();
-        paint_4.getTextBounds(content,0,content.length(),r);
-        canvas.drawText(content,-r.width()/2,r.height()+20,paint_4);
+        paint_4.getTextBounds(contentStr,0,contentStr.length(),r);
+        canvas.drawText(contentStr,-r.width()/2,r.height()+20,paint_4);
         canvas.restore();
     }
 
@@ -224,19 +223,19 @@ public class RoundIndicatorView extends View {
         for (int i = 0; i <= 30; i++) {
             if(i%6 == 0){   //画粗刻度和刻度值
                 paint.setStrokeWidth(dp2px(2));
-                paint.setAlpha(0x90);
+                paint.setAlpha(0xa0);
                 canvas.drawLine(0, -radius-sweepInWidth/2,0, -radius+sweepInWidth/2+dp2px(1), paint);
-                drawText(canvas,-10+i*maxNum/30+"",paint);
+                drawText(canvas,i*maxNum/30/10000+"",paint);
             }else {         //画细刻度
                 paint.setStrokeWidth(dp2px(1));
-                paint.setAlpha(0x70);
+                paint.setAlpha(0x80);
                 canvas.drawLine(0,-radius-sweepInWidth/2,0, -radius+sweepInWidth/2, paint);
             }
-            if(i==3 || i==9 || i==15 || i==21 || i==27){  //画刻度区间文字
-                paint.setStrokeWidth(dp2px(2));
-                paint.setAlpha(0x70);
-                drawText(canvas,text[(i-3)/6], paint);
-            }
+//            if(i==3 || i==9 || i==15 || i==21 || i==27){  //画刻度区间文字
+//                paint.setStrokeWidth(dp2px(2));
+//                paint.setAlpha(0xa0);
+//                drawText(canvas,text[(i-3)/6], paint);
+//            }
             canvas.rotate(angle); //逆时针
         }
         canvas.restore();
@@ -255,7 +254,7 @@ public class RoundIndicatorView extends View {
     private void drawRound(Canvas canvas) {
         canvas.save();
         //内圆
-        paint.setAlpha(0x60);
+        paint.setAlpha(0x50);
         paint.setStrokeWidth(sweepInWidth);
         RectF rectf = new RectF(-radius,-radius,radius,radius);
         canvas.drawArc(rectf,startAngle,sweepAngle,false,paint);
