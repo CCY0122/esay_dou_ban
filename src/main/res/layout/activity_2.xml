@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:diy="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.example.materialdesigntest.diy_view.RoundIndicatorView
+        android:id="@+id/weather_round"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        diy:maxNum="50"
+        />
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:padding="20dp"
+        >
+        <TextView
+            android:lineSpacingExtra="10dp"
+            android:id="@+id/weather_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="123123123123123123123123123123123"
+            android:textSize="25sp"
+            android:textColor="#ffffff"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

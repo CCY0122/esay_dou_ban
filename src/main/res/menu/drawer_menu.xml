@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/_1"
+            android:checkable="true"
+            android:title="1" />
+        <item
+            android:id="@+id/_2"
+            android:checkable="true"
+            android:icon="@mipmap/ic_launcher"
+            android:title="2" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/_3"
+            android:checkable="true"
+            android:icon="@drawable/aaa"
+            android:title="3" />
+    </group>
+    <item android:title="其他">
+        <menu>
+            <item
+                android:id="@+id/_4"
+                android:title="5"
+                android:checkable="true"/>
+            <item
+                android:id="@+id/_5"
+                android:title="4"
+                android:checkable="true"/>
+        </menu>
+    </item>
+
+</menu>
