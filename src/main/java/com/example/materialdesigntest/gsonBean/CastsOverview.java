@@ -6,7 +6,7 @@ import java.security.PublicKey;
  * Created by Administrator on 2016/12/13.
  */
 
-public class Casts {
+public class CastsOverview {
     public Avatars avatars;
 
     public class Avatars {
@@ -17,4 +17,5 @@ public class Casts {
 
     public String name;
     public String id;
+    public String alt;
 }

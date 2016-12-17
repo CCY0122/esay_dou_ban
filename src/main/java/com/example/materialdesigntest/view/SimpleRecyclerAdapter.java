@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import com.example.materialdesigntest.R;
 import com.example.materialdesigntest.gsonBean.DataOverview;
-import com.example.materialdesigntest.util.Mlog;
-import com.example.materialdesigntest.util.Mutil;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -27,6 +25,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private Context context;
     private List<DataOverview> data;
     private DisplayImageOptions option;
+    private OnClickListener clickListener;
+
+    public interface OnClickListener{
+        void onClick(View v , int pos);
+    }
+    public void setOnClickListener(OnClickListener listener){
+        this.clickListener = listener;
+    }
 
     public SimpleRecyclerAdapter(Context context ,List<DataOverview> data){
         this.context = context;
@@ -42,13 +48,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     @Override
-    public void onBindViewHolder(mViewHolder holder, final int position) {
+    public void onBindViewHolder(final mViewHolder holder, final int position) {
         ImageLoader.getInstance().displayImage(data.get(position).getImgUri(),holder.imageView,option);
-        holder.title.setText(data.get(position).getTitlle()+"");
+        holder.title.setText(data.get(position).getTitle()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mutil.showToast(position+"");
+                if(clickListener != null){
+                    clickListener.onClick(v , holder.getAdapterPosition());
+                }
             }
         });
 

@@ -27,7 +27,7 @@
         android:layout_height="20dp"
         android:textColor="#ffffff"
         android:paddingLeft="20dp"
-        android:text="ccy是大大大大帅哥！！"
+        android:text="ccy是大帅比"
         android:layout_gravity="left"
         android:layout_marginTop="180dp"/>
     <TextView

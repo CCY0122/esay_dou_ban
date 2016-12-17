@@ -1,7 +1,5 @@
 package com.example.materialdesigntest.gsonBean;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 /**
@@ -32,11 +30,11 @@ public class GMovie {
     public String title;
     public List<String> genres;
     public String summary;
-    public List<Casts> casts;
+    public List<CastsOverview> casts;
     public int collect_count; //看过人数
     public int wish_count;//想看人数
     public int ratings_count;//评分人数
-    public String mobile_url;
+    public String alt;//条目url
 
 
 }

@@ -3,8 +3,8 @@
     xmlns:card="http://schemas.android.com/apk/res-auto"
     android:id="@+id/a2_item_card_view"
     android:layout_width="150dp"
-    android:layout_height="150dp"
-    android:layout_margin="5dp"
+    android:layout_height="190dp"
+    android:layout_margin="4dp"
     android:orientation="vertical"
     card:cardCornerRadius="5dp"
     card:cardElevation="5dp">
@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/a2_item_image"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="170dp"
             android:scaleType="centerCrop"
             />
 

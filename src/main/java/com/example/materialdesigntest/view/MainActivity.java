@@ -29,8 +29,15 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,10 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-
         initView();
         initContentViewPager();
-
         initMenu();
     }
 
@@ -159,8 +164,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                Toast.makeText(this, "222", Toast.LENGTH_SHORT).show();
+            case R.id.menu_search:
+                Intent intent = new Intent(this,SearchActivity.class);
+                startActivity(intent);
                 break;
         }
         return true;
@@ -176,77 +182,3 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 }
 
-
-//    LinearLayout linearLayout;
-//    TextView t;
-//    Button b;
-//    TextView t2;
-//    ViewOutlineProvider viewOutlineProvider = null;
-//    ImageView img;
-//    ImageView img2;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-////        Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.abe);
-////        linearLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.view_pager,null);
-//        linearLayout = (LinearLayout) findViewById(R.id.linear);
-//        linearLayout.setVisibility(View.INVISIBLE);
-//        linearLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "33", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        img = (ImageView) findViewById(R.id.img);
-//        img2 = (ImageView) findViewById(R.id.imgg);
-//        b = (Button) findViewById(R.id.btn);
-//        b.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "9", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(MainActivity.this, Activity_2.class);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    startActivity(intent, ActivityOptions.
-//                            makeSceneTransitionAnimation(MainActivity.this, img,"share").toBundle());
-////                    startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
-//                }
-//            }
-//        });
-//        t2 = (TextView) findViewById(R.id.tv_2);
-//        t2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "2", Toast.LENGTH_SHORT).show();
-//                Log.d("ccy", "1");
-//            }
-//        });
-//
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//            viewOutlineProvider = new ViewOutlineProvider() {
-//                @Override
-//                public void getOutline(View view, Outline outline) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        outline.setOval(0, 0, view.getWidth(), view.getHeight());
-//                    }
-//                }
-//            };
-//        }
-//        t = (TextView) findViewById(R.id.tv);
-//        t.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//
-//                    t.setOutlineProvider(viewOutlineProvider);
-//                    linearLayout.setVisibility(View.VISIBLE);
-//                    Animator animator = ViewAnimationUtils.createCircularReveal(linearLayout, 0, 0, 0, linearLayout.getWidth());
-//                    animator.setDuration(400);
-////                    animator.setInterpolator(new AccelerateInterpolator());
-//                    animator.start();
-//                }
-//            }
-//        });
-//    }
-//}

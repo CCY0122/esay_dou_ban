@@ -1,6 +1,5 @@
 package com.example.materialdesigntest.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -8,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Slide;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -18,14 +16,13 @@ import android.widget.TextView;
 
 import com.example.materialdesigntest.R;
 import com.example.materialdesigntest.diy_view.RoundIndicatorView;
-import com.example.materialdesigntest.gsonBean.Casts;
+import com.example.materialdesigntest.gsonBean.CastsOverview;
 import com.example.materialdesigntest.gsonBean.DataOverview;
 import com.example.materialdesigntest.gsonBean.GMovie;
 import com.example.materialdesigntest.model.IDataHandle;
 import com.example.materialdesigntest.model.MovieImp;
 import com.example.materialdesigntest.util.Mlog;
 import com.example.materialdesigntest.util.Mutil;
-import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -34,7 +31,6 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -49,7 +45,8 @@ public class Activity_2 extends AppCompatActivity {
     private static final String TAG = "activity2";
     private static final int OK = 1;
     private static final int ERROR = 2;
-    private static final String BASE_URL = "https://api.douban.com/v2/movie/subject/";
+    public static final String MOVIE_BASE_URL = "https://api.douban.com/v2/movie/subject/";
+    public static final String ACTOR_BASE_URL = "https://api.douban.com/v2/movie/celebrity/";
 
     private Intent intent;
     private IDataHandle dataHandle = new MovieImp();
@@ -67,9 +64,10 @@ public class Activity_2 extends AppCompatActivity {
     private RoundIndicatorView roundIndicatorView;
     private RecyclerView recyclerView;
     private TextView summary;
+    private TextView to_web;
 
     private GMovie gMovie;
-    private List<Casts> castsData = new ArrayList<>();  //原始演员列表
+//    private List<CastsOverview> castsOverviewData = new ArrayList<>();  //原始演员列表
     private List<DataOverview> data = new ArrayList<>(); //适配演员recyclerview列表
 
     private android.os.Handler handler = new android.os.Handler() {
@@ -82,7 +80,7 @@ public class Activity_2 extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     break;
                 case ERROR:
-                    Mutil.showToast("出问题了T_T" + "activity_2 handleMessage");
+                    Mutil.showToast("出问题了T_T  请检查网络");
                     break;
             }
             pb.setVisibility(View.GONE);
@@ -111,7 +109,7 @@ public class Activity_2 extends AppCompatActivity {
         intent = getIntent();
         imgId = intent.getStringExtra("imgId");
         id = intent.getStringExtra("id");
-        url = BASE_URL + id;
+        url = MOVIE_BASE_URL + id;
     }
 
     private void refresh() {
@@ -128,7 +126,7 @@ public class Activity_2 extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     String json = response.body().string();
                     gMovie = (GMovie) dataHandle.parseJsonObject(json);
-                    Mlog.d(TAG, "" + gMovie.ratings_count + gMovie.year + gMovie.title);
+//                    Mlog.d(TAG, "" + gMovie.ratings_count + gMovie.year + gMovie.title);
                     handler.sendEmptyMessage(OK);
                 } else {
                     Mlog.d(TAG, "activity_2" + "网络错误" + response.code());
@@ -143,6 +141,14 @@ public class Activity_2 extends AppCompatActivity {
         LinearLayoutManager lin = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(lin);
         recyclerView.setAdapter(adapter);
+        adapter.setOnClickListener(new SimpleRecyclerAdapter.OnClickListener() {
+            @Override
+            public void onClick(View v, int pos) {
+                Intent intent = new Intent(Activity_2.this,WebActivity.class);
+                intent.putExtra("url",gMovie.casts.get(pos).alt);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initView() {
@@ -154,6 +160,7 @@ public class Activity_2 extends AppCompatActivity {
         roundIndicatorView = (RoundIndicatorView) findViewById(R.id.a2_round_indicator);
         recyclerView = (RecyclerView) findViewById(R.id.a2_recycler_view);
         summary = (TextView) findViewById(R.id.a2_summary);
+        to_web = (TextView) findViewById(R.id.a2_to_web_view);
 
         if (imgId != null) {
             ImageLoader.getInstance().displayImage(imgId, imageView, option);//提前加载本意是为了能过渡动画，UIL里应该有缓存
@@ -161,11 +168,11 @@ public class Activity_2 extends AppCompatActivity {
 
     }
 
-    private void wrapData(GMovie gMovie) {
+    private void wrapData(final GMovie gMovie) {
         if (imageView.getDrawable() == null) {
             ImageLoader.getInstance().displayImage(gMovie.images.large, imageView, option);
         }
-        Mlog.d(TAG, "豆瓣评分" + gMovie.rating.average);
+//        Mlog.d(TAG, "豆瓣评分" + gMovie.rating.average);
         title.setText(gMovie.title + "");
         if (gMovie.rating.average == 0.0) {
             rating.setText("暂无");
@@ -178,14 +185,23 @@ public class Activity_2 extends AppCompatActivity {
         StringBuffer con = new StringBuffer();
         con.append("类型:");
         for (int i = 0; i < gMovie.genres.size(); i++) {
-            con.append(gMovie.genres.get(i)).append("\t");
+            con.append(gMovie.genres.get(i)+"\t\t");
         }
-        con.append("。").append("上映时间:").append(gMovie.year).append("。\t");
+        con.append("。").append("上映时间:").append(gMovie.year).append("。\t\t");
         con.append("演员表:");
         for (int i = 0; i < gMovie.casts.size(); i++) {
-            con.append(gMovie.casts.get(i).name).append("\t");
+            con.append(gMovie.casts.get(i).name+"\t\t");
         }
         content.setText(con.toString() + "");
+
+        to_web.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Activity_2.this,WebActivity.class);
+                intent.putExtra("url",gMovie.alt);
+                startActivity(intent);
+            }
+        });
 
         new DataChange().changeToDataOverView(gMovie.casts, data);
     }
@@ -200,21 +216,21 @@ public class Activity_2 extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class DataChange implements DataOverviewAdapter<Casts> {
+    class DataChange implements DataOverviewAdapter<CastsOverview> {
         @Override
-        public void changeToDataOverView(Casts casts, DataOverview dataOverview) {
+        public void changeToDataOverView(CastsOverview castsOverview, DataOverview dataOverview) {
 
         }
 
         @Override
-        public void changeToDataOverView(List<Casts> t, List<DataOverview> dataOverviews) {
+        public void changeToDataOverView(List<CastsOverview> t, List<DataOverview> dataOverviews) {
             dataOverviews.clear();
             for (int i = 0; i < t.size(); i++) {
                 DataOverview d = new DataOverview();
-                Casts c = t.get(i);
+                CastsOverview c = t.get(i);
                 d.setId(c.id);
                 d.setImgUri(c.avatars.large);
-                d.setTitlle(c.name);
+                d.setTitle(c.name);
                 d.setContent("");
                 dataOverviews.add(d);
             }

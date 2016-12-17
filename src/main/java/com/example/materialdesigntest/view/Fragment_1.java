@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Gravity;
@@ -22,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -45,7 +46,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -63,9 +66,9 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     private static String DEFAULT_1;
     private static String DEFAULT_2;
     private static String DEFAULT_3;
-    private static String MOVIE_1 = "https://api.douban.com/v2/movie/in_theaters?city=杭州"; //正在热映
-    private static String MOVIE_2 = "https://api.douban.com/v2/movie/coming_soon";  //即将上映
-    private static String MOVIE_3 = "https://api.douban.com/v2/movie/top250";       //top250前20
+    public static String MOVIE_1 = "https://api.douban.com/v2/movie/in_theaters"; //正在热映
+    public static String MOVIE_2 = "https://api.douban.com/v2/movie/coming_soon";  //即将上映
+    public static String MOVIE_3 = "https://api.douban.com/v2/movie/top250";       //top250前20
     private static final int OK = 1;
     private static final int ERROR = 2;
     private String url;
@@ -102,12 +105,11 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                         adapter.setHeaderView(headerView);
                         adapter.notifyDataSetChanged();
                         dimssRef();
-                        Mlog.d("ccy","notify sucess");
                     }
                     break;
                 case ERROR:
                     Mlog.d("ccy", "ERROR 数据获取失败");
-                    Mutil.showToast("ERROR 数据获取失败");
+                    Mutil.showToast("数据获取失败,请检查网络");
                     dimssRef();
                     break;
             }
@@ -165,7 +167,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         initHeaderView();
         initRecyclerView();
         if (first) {
-            refresh();
+            refresh(null);
             first = false;
         }
         return v;
@@ -194,7 +196,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             private void showFab() {
                 if(!flag) {
                     fab.clearAnimation();
-                    fab.animate().alpha(1).scaleX(1).scaleY(1).setDuration(500).
+                    fab.animate().alpha(1).scaleX(1).scaleY(1).setDuration(400).
                             setInterpolator(new OvershootInterpolator()).
                             setListener(new AnimatorListenerAdapter() {
                                 @Override
@@ -210,7 +212,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             private void hideFab() {
                 if(flag) {
                     fab.clearAnimation();
-                    fab.animate().alpha(0.7f).scaleX(0).scaleY(0).setInterpolator(new DecelerateInterpolator()).setDuration(500).setListener(new AnimatorListenerAdapter() {
+                    fab.animate().alpha(0.7f).scaleX(0).scaleY(0).setInterpolator(new LinearInterpolator()).setDuration(150).setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
@@ -233,7 +235,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(null);
             }
         });
         headerView.setOnTouchListener(new View.OnTouchListener() {
@@ -245,13 +247,13 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
 
     }
 
-    private void refresh() {
+    private void refresh(@Nullable final Map<String,String> map) {
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.measure(0, 0);
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        Mutil.getJsonFromUrl(url, null, new Callback() {
+        Mutil.getJsonFromUrl(url, map, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -262,7 +264,9 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String json = response.body().string();
-                    dataOverviews.clear();
+                    if(map == null) {
+                        dataOverviews.clear();
+                    }
                     dataOverviews.addAll(dataHandle.parseJsonArray(json));
                     if (dataOverviews != null && dataOverviews.size() > 0) {
                         if (dataOverviews.size() > 4) {
@@ -300,7 +304,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                     case 2:
                         url = DEFAULT_3;break;
                 }
-                refresh();
+                refresh(null);
                 bottomSheet.dismiss();
             }
         });
@@ -314,6 +318,21 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         adapter.setHeaderView(headerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        adapter.setOnFooterClick(new MainRecyclerAdapter.onFooterClick() {
+            @Override
+            public void footClick(View v, int pos) {
+                DataOverview d = dataOverviews.get(pos);
+                if(d.getStart()+d.getCount() < d.getTotal()){
+                    Map<String,String> map = new HashMap<String, String>();
+                    map.put("start",d.getStart()+d.getCount()+"");
+                    Mlog.d("test","start="+d.getStart()+"total="+d.getTotal()+"count="+d.getCount());
+                    refresh(map);
+                }else {
+                    Mutil.showToast("没有更多了");
+                }
+            }
+        });
     }
 
     private MAdapter mAdapter;
@@ -334,7 +353,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                     View view = viewPagerDot.getChildAt(i );
                     ((ImageView) view).setImageResource(R.drawable.unselect);
                 }
-                imgDescribe.setText(headerData.get(position).getTitlle() + "");
+                imgDescribe.setText(headerData.get(position).getTitle() + "");
                 ((ImageView) viewPagerDot.getChildAt(position)).setImageResource(R.drawable.select);
             }
 
@@ -370,7 +389,6 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Mutil.showToast("click img");
                             DataOverview d = (DataOverview) v.getTag();
                             Intent intent = new Intent(context, Activity_2.class);
                             intent.putExtra("imgId",d.getImgUri());
@@ -392,7 +410,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                     params.setMargins(Mutil.dp2px(2),0,0, 0);
                     if (i == 0) {
                         params.setMargins(Mutil.dp2px(290),0,0,0);
-                        imgDescribe.setText(headerData.get(0).getTitlle());
+                        imgDescribe.setText(headerData.get(0).getTitle());
                     }
 
                     viewPagerDot.addView(dot, params);

@@ -45,7 +45,7 @@ public class RoundIndicatorView extends View {
     private int sweepOutWidth;//外圆的宽度
     private int currentNum=0;//需设置setter、getter 供属性动画使用
     private String[] text ={"","","","",""};
-    private int[] indicatorColor = {0xffffffff,0x00ffffff,0x99ffffff,0xffffffff};
+    private int[] indicatorColor = {0xffffffff,0x33ffffff,0x66ffffff,0xbbffffff,0xffffffff};
     private String contentStr;
 
     public int getCurrentNum() {
@@ -115,7 +115,7 @@ public class RoundIndicatorView extends View {
 
     private void initAttr(AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.RoundIndicatorView);
-        maxNum = array.getInt(R.styleable.RoundIndicatorView_maxNum,200000);
+        maxNum = array.getInt(R.styleable.RoundIndicatorView_maxNum,300000);
         startAngle = array.getInt(R.styleable.RoundIndicatorView_startAngle,160);
         sweepAngle = array.getInt(R.styleable.RoundIndicatorView_sweepAngle,220);
 //        contentStr = array.getString(R.styleable.RoundIndicatorView_contentStr);
@@ -223,7 +223,7 @@ public class RoundIndicatorView extends View {
         for (int i = 0; i <= 30; i++) {
             if(i%6 == 0){   //画粗刻度和刻度值
                 paint.setStrokeWidth(dp2px(2));
-                paint.setAlpha(0xa0);
+                paint.setAlpha(0xb0);
                 canvas.drawLine(0, -radius-sweepInWidth/2,0, -radius+sweepInWidth/2+dp2px(1), paint);
                 drawText(canvas,i*maxNum/30/10000+"",paint);
             }else {         //画细刻度
@@ -259,6 +259,7 @@ public class RoundIndicatorView extends View {
         RectF rectf = new RectF(-radius,-radius,radius,radius);
         canvas.drawArc(rectf,startAngle,sweepAngle,false,paint);
         //外圆
+        paint.setAlpha(0x30);
         paint.setStrokeWidth(sweepOutWidth);
         int w = dp2px(10);
         RectF rectf2 = new RectF(-radius-w , -radius-w , radius+w , radius+w);

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:id="@+id/footer_view"
+    android:layout_margin="5dp"
+    card:cardElevation="5dp"
+    card:cardCornerRadius="5dp"
+    card:cardBackgroundColor="#A9A9A9">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="加载更多"
+            android:gravity="center"
+            android:textSize="20sp"/>
+    </FrameLayout>
+
+</android.support.v7.widget.CardView>

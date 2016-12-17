@@ -139,11 +139,11 @@ public class ViewIndicator extends LinearLayout {
     }
 
     private void initPath() {
-        path.moveTo(0,-dp2px(4));
-        path.lineTo(triangleWidth,-dp2px(4));
+        path.moveTo(0,-dp2px(6));
+        path.lineTo(triangleWidth,-dp2px(6));
 //        path.lineTo(triangleWidth/2 , -triangleWidth/2);
-        path.lineTo(triangleWidth,-dp2px(7));
-        path.lineTo(0,-dp2px(7));
+        path.lineTo(triangleWidth,-dp2px(10));
+        path.lineTo(0,-dp2px(10));
         path.close();
     }
 

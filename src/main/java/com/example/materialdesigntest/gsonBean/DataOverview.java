@@ -7,18 +7,21 @@ package com.example.materialdesigntest.gsonBean;
 public class DataOverview {
 
     private String imgUri;
-    private String titlle;
+    private String title;
     private String content;
     private String id;
+    private int start;
+    private int total;
+    private int count;
 
-    public DataOverview(){
+    public DataOverview() {
 
     }
 
-    public DataOverview(String id, String content, String titlle, String imgUri) {
+    public DataOverview(String id, String content, String title, String imgUri) {
         this.id = id;
         this.content = content;
-        this.titlle = titlle;
+        this.title = title;
         this.imgUri = imgUri;
     }
 
@@ -39,12 +42,12 @@ public class DataOverview {
         this.imgUri = imgUri;
     }
 
-    public String getTitlle() {
-        return titlle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitlle(String titlle) {
-        this.titlle = titlle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -53,5 +56,29 @@ public class DataOverview {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

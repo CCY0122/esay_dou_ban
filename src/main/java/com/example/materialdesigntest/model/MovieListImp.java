@@ -28,6 +28,9 @@ public class MovieListImp implements IDataHandle<DataOverview> {
         final List<DataOverview> movieList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
+            int start = jsonObject.getInt("start");
+            int total = jsonObject.getInt("total");
+            int count = jsonObject.getInt("count");
             JSONArray jsonArray = jsonObject.optJSONArray("subjects");
             for(int i =0 ; i<jsonArray.length() ; i++){
                 JSONObject obj = jsonArray.optJSONObject(i);
@@ -46,6 +49,9 @@ public class MovieListImp implements IDataHandle<DataOverview> {
                     content.append(castsObj.optString("name")).append("\t\t\t");
                 }
                 DataOverview a = new DataOverview(id,content.toString(),title,imgurl);
+                a.setCount(count);
+                a.setStart(start);
+                a.setTotal(total);
                 movieList.add(a);
 
             }
