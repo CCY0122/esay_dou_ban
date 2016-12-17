@@ -1,5 +1,6 @@
 package com.example.materialdesigntest.view;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -51,6 +53,7 @@ public class SearchActivity extends AppCompatActivity{
     private RecyclerView recyclerView;
     private SearchAdapter adapter;
     private ProgressBar pb;
+    private SharedPreferences sp;
 
     private Handler handler = new Handler(){
         @Override
@@ -79,6 +82,20 @@ public class SearchActivity extends AppCompatActivity{
         getSupportActionBar().hide();
 
         initView();
+        initHistory();
+
+    }
+
+    private void initHistory() {
+        sp = getSharedPreferences("history",MODE_PRIVATE);
+        String his = sp.getString("his","ccy,");
+        Mlog.d("his","get his:"+his);
+        String data[] = his.split(",");
+        for (int i = 0; i < data.length; i++) {
+            Mlog.d("his","\t--------"+data[i]);
+        }
+        ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,data);
+        editText.setAdapter(adapter);
 
     }
 
@@ -115,11 +132,28 @@ public class SearchActivity extends AppCompatActivity{
                     Map<String,String> map = new HashMap<String, String>();
                     map.put("q",text);
                     doSearch(url,map);
+                    saveHis(text);
                 }else {
                     Mutil.showToast("内容不能为空呀");
                 }
             }
         });
+    }
+
+    private void saveHis(String text) {
+        sp = getSharedPreferences("history",MODE_PRIVATE);
+        String his = sp.getString("his","ccy,");
+        Mlog.d("his",his);
+        if(his.contains(text)){
+            Mlog.d("his","true");
+            return;
+        }
+        StringBuffer sb = new StringBuffer(his).append(text).append(",");
+        Mlog.d("his:","save his:"+sb.toString());
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putString("his",sb.toString());
+        spe.commit();
+
     }
 
     private void initRecycler(List<DataOverview> data) {

@@ -4,30 +4,42 @@
         <item
             android:id="@+id/_1"
             android:checkable="true"
-            android:title="1" />
+            android:icon="@drawable/search3"
+            android:title="搜索" />
         <item
             android:id="@+id/_2"
             android:checkable="true"
-            android:icon="@mipmap/ic_launcher"
-            android:title="2" />
-    </group>
-    <group>
+            android:icon="@drawable/setup"
+            android:title="设置" />
         <item
             android:id="@+id/_3"
             android:checkable="true"
-            android:icon="@drawable/aaa"
-            android:title="3" />
+            android:icon="@drawable/update"
+            android:title="检查更新" />
+        <item
+            android:id="@+id/_4"
+            android:checkable="true"
+            android:icon="@drawable/clean"
+            android:title="清理缓存" />
     </group>
+
     <item android:title="其他">
         <menu>
             <item
-                android:id="@+id/_4"
-                android:title="5"
-                android:checkable="true"/>
+                android:id="@+id/_6"
+                android:checkable="true"
+                android:icon="@drawable/love"
+                android:title="支持作者" />
             <item
                 android:id="@+id/_5"
-                android:title="4"
-                android:checkable="true"/>
+                android:checkable="true"
+                android:icon="@drawable/warning2"
+                android:title="免责声明" />
+            <item
+                android:id="@+id/_7"
+                android:checkable="true"
+                android:icon="@drawable/feedback"
+                android:title="问题反馈" />
         </menu>
     </item>
 

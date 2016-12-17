@@ -2,7 +2,10 @@ package com.example.materialdesigntest.view;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -49,6 +52,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager contentViewPager;
 
     private List<Fragment> fragmentList;
+    private boolean quitflag = true;
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            quitflag = true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Mutil.showToast("3");
                         break;
                     case R.id._4:
-//                        Toast.makeText(MainActivity.this, "4", Toast.LENGTH_SHORT).show();
+                        SharedPreferences sp = getSharedPreferences("history",0);
+                        sp.edit().clear().commit();
                         Mutil.showToast("4");
                         break;
                     case R.id._5:
@@ -178,6 +191,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             drawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
+        if(quitflag){
+            Toast.makeText(this,"再按一次退出",Toast.LENGTH_SHORT).show();
+            quitflag = false;
+            handler.sendEmptyMessageDelayed(1,2000);
+            return;
+        }
+
         super.onBackPressed();
     }
 }
