@@ -40,7 +40,7 @@ public class MovieListImp implements IDataHandle<DataOverview> {
                 StringBuffer content = new StringBuffer();
                 JSONArray genres = obj.optJSONArray("genres");
                 for (int k = 0; k < genres.length() ; k++) {
-                    content.append(genres.getString(k)).append("\t\t");
+                    content.append(genres.getString(k)).append("\t");
                 }
                 content.append("\n");
                 JSONArray casts = obj.optJSONArray("casts");

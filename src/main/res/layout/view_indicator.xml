@@ -40,16 +40,7 @@
             android:gravity="center"
             android:background="?android:attr/selectableItemBackground"
             android:textColor="#bbffffff"/>
-        <TextView
-            android:id="@+id/view_5"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="我的"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:background="?android:attr/selectableItemBackground"
-            android:textColor="#bbffffff"/>
+
 
 
     </com.example.materialdesigntest.diy_view.ViewIndicator>

@@ -48,8 +48,8 @@
                 android:layout_width="0dp"
                 android:layout_height="55dp"
                 android:layout_weight="1"
-                android:completionHint="搜索历史"
                 android:completionThreshold="1"
+                android:completionHint="搜索历史"
                 android:hint="搜影视、主演、导演" />
 
             <Button

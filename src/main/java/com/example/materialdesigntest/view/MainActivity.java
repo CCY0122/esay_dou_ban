@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentList.add(Fragment_1.newInstance(Fragment_1.TYPE_MOVIE));
         fragmentList.add(Fragment_1.newInstance(Fragment_1.TYPE_MOVIE));
         fragmentList.add(Fragment_1.newInstance(Fragment_1.TYPE_MOVIE));
-        fragmentList.add(Fragment_1.newInstance(Fragment_1.TYPE_MOVIE));
         contentViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

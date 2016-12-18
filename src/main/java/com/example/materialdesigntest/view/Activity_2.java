@@ -187,7 +187,7 @@ public class Activity_2 extends AppCompatActivity {
         for (int i = 0; i < gMovie.genres.size(); i++) {
             con.append(gMovie.genres.get(i)+"\t\t");
         }
-        con.append("。").append("上映时间:").append(gMovie.year).append("。\t\t");
+        con.append("\n").append("上映时间:").append(gMovie.year).append("。\n");
         con.append("演员表:");
         for (int i = 0; i < gMovie.casts.size(); i++) {
             con.append(gMovie.casts.get(i).name+"\t\t");

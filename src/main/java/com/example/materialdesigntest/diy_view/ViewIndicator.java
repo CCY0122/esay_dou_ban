@@ -37,7 +37,7 @@ public class ViewIndicator extends LinearLayout {
     private int triangleWidth;
     private int itemWidth;
     private int screenWidth;
-    private int visibleItemCount = 4;
+    private int visibleItemCount = 3;
     private int allItemCount;
     private int triangleTranslate;
 

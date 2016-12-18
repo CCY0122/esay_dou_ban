@@ -2,15 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="230dp"
     android:orientation="vertical"
     android:clipChildren="false">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:clipChildren="false">
 
     <com.example.materialdesigntest.diy_view.HeaderViewPager
         android:id="@+id/view_pager"
         android:layout_width="140dp"
-        android:layout_height="200dp"
-        android:clipChildren="false"
+        android:layout_height="196dp"
         android:layout_gravity="center_horizontal">
     </com.example.materialdesigntest.diy_view.HeaderViewPager>
     <LinearLayout
@@ -30,6 +33,23 @@
         android:text="ccy是大帅比"
         android:layout_gravity="left"
         android:layout_marginTop="180dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="200dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/view_pager_title"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:padding="3dp"
+            android:layout_marginLeft="8dp"
+            android:text="正在热映"
+            android:background="@drawable/round_text"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
+    </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,5 +57,6 @@
         android:text="陈\n朝\n勇\n是\n大\n帅\n比"
         android:layout_marginTop="30dp"
         android:alpha="0.1"/>
+    </FrameLayout>
 
 </FrameLayout>

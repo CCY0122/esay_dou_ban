@@ -83,6 +83,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     private HeaderViewPager viewPager;
     private LinearLayout viewPagerDot;
     private TextView imgDescribe;
+    private TextView viewPagerTitle;
     private FloatingActionButton fab;
     private BottomSheetDialog bottomSheet;
 
@@ -226,6 +227,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         headerView = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.view_pager, null);
         viewPagerDot = (LinearLayout) headerView.findViewById(R.id.view_pager_dot);
         imgDescribe = (TextView) headerView.findViewById(R.id.view_pager_text);
+        viewPagerTitle = (TextView) headerView.findViewById(R.id.view_pager_title);
         viewPager = (HeaderViewPager) headerView.findViewById(R.id.view_pager);
         viewPager.setPageTransformer(true ,new MyTransformation());
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
@@ -298,12 +300,16 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        url = DEFAULT_1;break;
+                        url = DEFAULT_1;
+                        break;
                     case 1:
-                        url = DEFAULT_2;break;
+                        url = DEFAULT_2;
+                        break;
                     case 2:
-                        url = DEFAULT_3;break;
+                        url = DEFAULT_3;
+                        break;
                 }
+                viewPagerTitle.setText(bottomSheetData.get(position)+"");
                 refresh(null);
                 bottomSheet.dismiss();
             }
@@ -317,8 +323,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         adapter = new MainRecyclerAdapter(context, dataOverviews,getActivity());
         adapter.setHeaderView(headerView);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         adapter.setOnFooterClick(new MainRecyclerAdapter.onFooterClick() {
             @Override
             public void footClick(View v, int pos) {
