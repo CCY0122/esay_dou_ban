@@ -31,6 +31,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private List<DataOverview> data;
     private Activity activity;
     private DisplayImageOptions options;
+    private onClickListener listener;
+    public interface onClickListener{
+        Intent getIntent();
+    }
+    public void setListener(onClickListener li){
+        this.listener = li;
+    }
 
 
     public SearchAdapter( Context context,List<DataOverview> data , Activity activity){
@@ -57,15 +64,18 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             public void onClick(View v) {
                 String imgId = data.get(pos).getImgUri();
                 String id = data.get(pos).getId();
-                Intent intent = new Intent(context, Activity_2.class);
-                intent.putExtra("imgId", imgId);
-                intent.putExtra("id",id);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
-                            activity,holder.imageView, "share"
-                    ).toBundle());
-                } else {
-                    context.startActivity(intent);
+//                Intent intent = new Intent(context, Activity_2.class);
+                if(listener != null) {
+                    Intent intent = listener.getIntent();
+                    intent.putExtra("imgId", imgId);
+                    intent.putExtra("id", id);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+                                activity, holder.imageView, "share"
+                        ).toBundle());
+                    } else {
+                        context.startActivity(intent);
+                    }
                 }
             }
         });

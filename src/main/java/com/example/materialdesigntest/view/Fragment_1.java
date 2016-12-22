@@ -2,6 +2,7 @@ package com.example.materialdesigntest.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +38,7 @@ import android.widget.TextView;
 import com.example.materialdesigntest.R;
 import com.example.materialdesigntest.diy_view.HeaderViewPager;
 import com.example.materialdesigntest.gsonBean.DataOverview;
+import com.example.materialdesigntest.model.BookListImp;
 import com.example.materialdesigntest.model.IDataHandle;
 import com.example.materialdesigntest.model.MovieListImp;
 import com.example.materialdesigntest.util.Mlog;
@@ -45,6 +48,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,15 +68,14 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     public static final String TYPE_MOVIE = "movie";
     public static final String TYPE_BOOK = "book";
     public static final String TYPE_MUSIC = "music";
-    private static String DEFAULT_1;
-    private static String DEFAULT_2;
-    private static String DEFAULT_3;
     public static String MOVIE_1 = "https://api.douban.com/v2/movie/in_theaters"; //正在热映
     public static String MOVIE_2 = "https://api.douban.com/v2/movie/coming_soon";  //即将上映
     public static String MOVIE_3 = "https://api.douban.com/v2/movie/top250";       //top250前20
+    public static String BOOK_BASE = "https://api.douban.com/v2/book/search";
+    public static String BOOK_1 = "https://api.douban.com/v2/book/search?tag=%E5%B0%8F%E8%AF%B4&";//小说
     private static final int OK = 1;
     private static final int ERROR = 2;
-    private String url;
+    private String defaultUrl;
     private String type;
     private DisplayImageOptions options;
 
@@ -87,10 +91,11 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     private FloatingActionButton fab;
     private BottomSheetDialog bottomSheet;
 
-    private List<String> bottomSheetData = new ArrayList<>();
+    private List<Bean> bottomSheetData = new ArrayList<>();
     private List<DataOverview> dataOverviews = new ArrayList<>();
     private List<DataOverview> headerData = new ArrayList<>();
     private IDataHandle dataHandle;
+    private Intent typeIntent;
 
     private boolean first = true;
 
@@ -140,24 +145,48 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         type = getArguments().getString("type");
         switch (type) {
             case TYPE_MOVIE:
-                url = MOVIE_1;
-                DEFAULT_1 = MOVIE_1;
-                DEFAULT_2 = MOVIE_2;
-                DEFAULT_3 = MOVIE_3;
+                defaultUrl = MOVIE_1;
 
                 bottomSheetData.clear();
-                bottomSheetData.add("正在热映");
-                bottomSheetData.add("即将上映");
-                bottomSheetData.add("最高评分");
+                bottomSheetData.add(new Bean("正在热映",MOVIE_1));
+                bottomSheetData.add(new Bean("即将上映",MOVIE_2));
+                bottomSheetData.add(new Bean("最高评分",MOVIE_3));
                 dataHandle = new MovieListImp();
+                typeIntent = new Intent(context,Activity_2.class);
                 break;
             case TYPE_BOOK:
+                defaultUrl = BOOK_1;
 
+                bottomSheetData.clear();
+                bottomSheetData.add(new Bean("小说",wrapBookUrl("小说")));
+                bottomSheetData.add(new Bean("经典",wrapBookUrl("经典")));
+                bottomSheetData.add(new Bean("历史",wrapBookUrl("历史")));
+                bottomSheetData.add(new Bean("随笔",wrapBookUrl("随笔")));
+                bottomSheetData.add(new Bean("童话",wrapBookUrl("童话")));
+                bottomSheetData.add(new Bean("推理",wrapBookUrl("推理")));
+                bottomSheetData.add(new Bean("悬疑",wrapBookUrl("悬疑")));
+                bottomSheetData.add(new Bean("青春",wrapBookUrl("青春")));
+                bottomSheetData.add(new Bean("爱情",wrapBookUrl("爱情")));
+                bottomSheetData.add(new Bean("言情",wrapBookUrl("言情")));
+                bottomSheetData.add(new Bean("科幻",wrapBookUrl("科幻")));
+                dataHandle = new BookListImp();
+                typeIntent = new Intent(context,Activity_2.class);//暂时，防crash
                 break;
             case TYPE_MUSIC:
-
+                typeIntent = new Intent(context,Activity_2.class);//暂时，防crash
                 break;
         }
+    }
+    private String wrapBookUrl(String tag){
+        StringBuffer sb = new StringBuffer(BOOK_BASE);
+        try {
+            String encodeTag = URLEncoder.encode(tag,"utf-8");
+            sb.append("?").append("tag=").append(encodeTag).append("&");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+//        sb.append("?").append("tag=").append(tag).append("&"); //经验证，中文不编码也是可以的
+        return sb.toString();
     }
 
     @Nullable
@@ -168,7 +197,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         initHeaderView();
         initRecyclerView();
         if (first) {
-            refresh(null);
+            refresh(defaultUrl,null);
             first = false;
         }
         return v;
@@ -228,6 +257,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         viewPagerDot = (LinearLayout) headerView.findViewById(R.id.view_pager_dot);
         imgDescribe = (TextView) headerView.findViewById(R.id.view_pager_text);
         viewPagerTitle = (TextView) headerView.findViewById(R.id.view_pager_title);
+        viewPagerTitle.setText(bottomSheetData.get(0).name+"");
         viewPager = (HeaderViewPager) headerView.findViewById(R.id.view_pager);
         viewPager.setPageTransformer(true ,new MyTransformation());
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
@@ -237,7 +267,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh(null);
+                refresh(defaultUrl,null);
             }
         });
         headerView.setOnTouchListener(new View.OnTouchListener() {
@@ -249,7 +279,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
 
     }
 
-    private void refresh(@Nullable final Map<String,String> map) {
+    private void refresh(String url ,@Nullable final Map<String,String> map) {
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.measure(0, 0);
             swipeRefreshLayout.setRefreshing(true);
@@ -266,6 +296,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String json = response.body().string();
+//                    Mlog.d("ccy",""+json);
                     if(map == null) {
                         dataOverviews.clear();
                     }
@@ -289,28 +320,18 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
-    private ArrayAdapter apt;
+    private BottomAdapter apt;
     private void createBottomSheet(){
         bottomSheet = new BottomSheetDialog(context);
         ListView listView = new ListView(context);
-        apt = new ArrayAdapter(context,android.R.layout.simple_list_item_1,bottomSheetData);
+        apt = new BottomAdapter(context,bottomSheetData);
         listView.setAdapter(apt);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0:
-                        url = DEFAULT_1;
-                        break;
-                    case 1:
-                        url = DEFAULT_2;
-                        break;
-                    case 2:
-                        url = DEFAULT_3;
-                        break;
-                }
-                viewPagerTitle.setText(bottomSheetData.get(position)+"");
-                refresh(null);
+                defaultUrl = bottomSheetData.get(position).url;
+                viewPagerTitle.setText(bottomSheetData.get(position).name+"");
+                refresh(defaultUrl,null);
                 bottomSheet.dismiss();
             }
         });
@@ -324,17 +345,26 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
         adapter.setHeaderView(headerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        adapter.setListener(new MainRecyclerAdapter.onClickListener() {
+            @Override
+            public Intent getIntent() {
+                return typeIntent;
+            }
+        });
         adapter.setOnFooterClick(new MainRecyclerAdapter.onFooterClick() {
             @Override
             public void footClick(View v, int pos) {
-                DataOverview d = dataOverviews.get(pos);
-                if(d.getStart()+d.getCount() < d.getTotal()){
-                    Map<String,String> map = new HashMap<String, String>();
-                    map.put("start",d.getStart()+d.getCount()+"");
-                    Mlog.d("test","start="+d.getStart()+"total="+d.getTotal()+"count="+d.getCount());
-                    refresh(map);
-                }else {
-                    Mutil.showToast("没有更多了");
+                if(dataOverviews != null && dataOverviews.size() > 0) {
+                    DataOverview d = dataOverviews.get(pos);
+                    Mlog.d("ccy","footclick:"+d.getStart()+"///"+d.getCount()+"///"+d.getTotal());
+                    if (d.getStart() + d.getCount() < d.getTotal()) {
+                        Map<String, String> map = new HashMap<String, String>();
+                        map.put("start", d.getStart() + d.getCount() + "");
+                        Mlog.d("test", "start=" + d.getStart() + "total=" + d.getTotal() + "count=" + d.getCount());
+                        refresh(defaultUrl,map);
+                    } else {
+                        Mutil.showToast("没有更多了");
+                    }
                 }
             }
         });
@@ -395,7 +425,7 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
                         @Override
                         public void onClick(View v) {
                             DataOverview d = (DataOverview) v.getTag();
-                            Intent intent = new Intent(context, Activity_2.class);
+                            Intent intent = typeIntent;
                             intent.putExtra("imgId",d.getImgUri());
                             intent.putExtra("id",d.getId());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -454,21 +484,54 @@ public class Fragment_1 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.view_pager_item_img:
-//                Mutil.showToast("click img");
-//                int resId = (int) v.getTag();
-//                Intent intent = new Intent(context, Activity_2.class);
-//                intent.putExtra("resId", resId);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
-//                            getActivity(), v, "share"
-//                    ).toBundle());
-//                } else {
-//                    startActivity(intent);
-//                }
-//                break;
             case R.id.fab:
                 createBottomSheet();
+        }
+    }
+
+    class Bean{
+        public String name;
+        public String url;
+
+        public Bean(String name, String url) {
+            this.name = name;
+            this.url = url;
+        }
+    }
+    class BottomAdapter extends BaseAdapter{
+        private List<Bean> data;
+        private Context context;
+
+        public BottomAdapter(Context context,List<Bean> data) {
+            this.data = data;
+            this.context =context;
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return data.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v;
+            if(convertView == null){
+                v = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1,parent,false);
+            }else {
+                v = convertView;
+            }
+            ((TextView)v).setText(""+data.get(position).name);
+            return v;
         }
     }
 }

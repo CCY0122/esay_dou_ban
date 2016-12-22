@@ -1,5 +1,6 @@
 package com.example.materialdesigntest.view;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import android.widget.RadioGroup;
 
 import com.example.materialdesigntest.R;
 import com.example.materialdesigntest.gsonBean.DataOverview;
+import com.example.materialdesigntest.model.BookListImp;
+import com.example.materialdesigntest.model.IDataHandle;
 import com.example.materialdesigntest.model.MovieListImp;
 import com.example.materialdesigntest.util.Mlog;
 import com.example.materialdesigntest.util.Mutil;
@@ -40,8 +43,9 @@ public class SearchActivity extends AppCompatActivity{
     private static final String TAG = "search_act";
     private static String SEARCH_BASE_URL = "https://api.douban.com/v2/movie/search";//默认为搜电影基本url
     public static final String SEARCH_MOVIE_BASE_URL = "https://api.douban.com/v2/movie/search";
-    public static final String SEARCH_BOOK_BASE_URL = "";
+    public static final String SEARCH_BOOK_BASE_URL = "https://api.douban.com/v2/book/search";
     public static final String SEARCH_MUSIC_BASE_URL = "";
+
     private static final int OK = 1;
     private static final int ERROR = 0;
     private String url;
@@ -54,6 +58,7 @@ public class SearchActivity extends AppCompatActivity{
     private SearchAdapter adapter;
     private ProgressBar pb;
     private SharedPreferences sp;
+    private IDataHandle dataHandle = new MovieListImp();
 
     private Handler handler = new Handler(){
         @Override
@@ -113,9 +118,22 @@ public class SearchActivity extends AppCompatActivity{
                     case R.id.search_btn_movie:
                         SEARCH_BASE_URL = SEARCH_MOVIE_BASE_URL;
                         editText.setHint("搜影视、主演、导演");
+                        dataHandle = new MovieListImp();
+                        if(adapter != null){
+                            adapter.setListener(new SearchAdapter.onClickListener() {
+                                @Override
+                                public Intent getIntent() {
+                                    Intent intent = new Intent(SearchActivity.this,Activity_2.class);
+                                    return intent;
+                                }
+                            });
+                        }
                         break;
                     case R.id.search_btn_book:
-                        editText.setHint("搜书籍");
+                        SEARCH_BASE_URL = SEARCH_BOOK_BASE_URL;
+                        editText.setHint("搜书名、作者、分类");
+                        dataHandle = new BookListImp();
+                        //// TODO: 2016/12/22 补充book详情页的intent 
                         break;
                     case R.id.search_btn_music:
                         editText.setHint("搜音乐");
@@ -161,6 +179,13 @@ public class SearchActivity extends AppCompatActivity{
         LinearLayoutManager linear = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linear);
         recyclerView.setAdapter(adapter);
+        adapter.setListener(new SearchAdapter.onClickListener() {
+            @Override
+            public Intent getIntent() {
+                Intent intent = new Intent(SearchActivity.this,Activity_2.class);
+                return intent;
+            }
+        });
     }
 
     private void doSearch(String url , Map<String,String> map) {
@@ -178,7 +203,7 @@ public class SearchActivity extends AppCompatActivity{
                     String json = response.body().string();
 //                    Mlog.d(TAG,""+json);
                     List<DataOverview> data;
-                    data = new MovieListImp().parseJsonArray(json);
+                    data = dataHandle.parseJsonArray(json);
                     Mlog.d(TAG,"1///"+data.get(0).getTitle());
                     Message msg = handler.obtainMessage(OK);
                     msg.obj = data;

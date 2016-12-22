@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
-            android:id="@+id/_1"
+            android:id="@+id/drawer_search"
             android:checkable="true"
             android:icon="@drawable/search3"
             android:title="搜索" />
         <item
-            android:id="@+id/_2"
+            android:id="@+id/drawer_set"
             android:checkable="true"
             android:icon="@drawable/setup"
             android:title="设置" />
         <item
-            android:id="@+id/_3"
+            android:id="@+id/drawer_update"
             android:checkable="true"
             android:icon="@drawable/update"
             android:title="检查更新" />
         <item
-            android:id="@+id/_4"
+            android:id="@+id/drawer_clean"
             android:checkable="true"
             android:icon="@drawable/clean"
             android:title="清理缓存" />
@@ -26,17 +26,17 @@
     <item android:title="其他">
         <menu>
             <item
-                android:id="@+id/_6"
+                android:id="@+id/drawer_support_author"
                 android:checkable="true"
                 android:icon="@drawable/love"
                 android:title="支持作者" />
             <item
-                android:id="@+id/_5"
+                android:id="@+id/drawer_mianzeshengming"
                 android:checkable="true"
                 android:icon="@drawable/warning2"
                 android:title="免责声明" />
             <item
-                android:id="@+id/_7"
+                android:id="@+id/drawer_feedback"
                 android:checkable="true"
                 android:icon="@drawable/feedback"
                 android:title="问题反馈" />

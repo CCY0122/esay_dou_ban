@@ -39,8 +39,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     private DisplayImageOptions options;
     private Activity activity;
     private View footerView;
-
+    private onClickListener listener;
     private onFooterClick footClick;
+    public interface onClickListener{
+        Intent getIntent();
+    }
+    public void setListener(onClickListener li){
+        this.listener = li;
+    }
     public interface onFooterClick{
         void footClick(View v , int pos);
     }
@@ -115,15 +121,17 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
                 public void onClick(View v) {
                     String imgId = data.get(pos).getImgUri();
                     String id = data.get(pos).getId();
-                    Intent intent = new Intent(context, Activity_2.class);
-                    intent.putExtra("imgId", imgId);
-                    intent.putExtra("id",id);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
-                                activity,holder.imageView, "share"
-                        ).toBundle());
-                    } else {
-                        context.startActivity(intent);
+                    if(listener != null) {
+                        Intent intent = listener.getIntent();
+                        intent.putExtra("imgId", imgId);
+                        intent.putExtra("id", id);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(
+                                    activity, holder.imageView, "share"
+                            ).toBundle());
+                        } else {
+                            context.startActivity(intent);
+                        }
                     }
                 }
             });

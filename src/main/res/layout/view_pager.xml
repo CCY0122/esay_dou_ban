@@ -2,18 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear"
     android:layout_width="match_parent"
-    android:layout_height="230dp"
+    android:layout_height="222dp"
     android:orientation="vertical"
     android:clipChildren="false">
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="222dp"
         android:clipChildren="false">
 
     <com.example.materialdesigntest.diy_view.HeaderViewPager
         android:id="@+id/view_pager"
         android:layout_width="140dp"
-        android:layout_height="196dp"
+        android:layout_height="200dp"
         android:layout_gravity="center_horizontal">
     </com.example.materialdesigntest.diy_view.HeaderViewPager>
     <LinearLayout
@@ -35,20 +35,20 @@
         android:layout_marginTop="180dp"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="22dp"
         android:layout_marginTop="200dp"
         android:gravity="center_vertical">
         <TextView
             android:id="@+id/view_pager_title"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:padding="3dp"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="8dp"
-            android:text="正在热映"
             android:background="@drawable/round_text"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"

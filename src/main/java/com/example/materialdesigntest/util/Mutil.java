@@ -117,9 +117,11 @@ public class Mutil {
 //            okHttpClient.newCall(request).enqueue(callback);
 //            post不行可能是要中文编码 记得试试
             StringBuffer sb = new StringBuffer(url);
-            sb.append("?");
+            if(!url.contains("?")) {  //表明源url没有键值参数  //不优雅
+                sb.append("?");
+            }
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                sb.append(entry.getKey()).append("=").append(entry.getValue());
+                sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
             }
             Request request = new Request.Builder().url(sb.toString()).build();
             okHttpClient.newCall(request).enqueue(callback);
